@@ -7,7 +7,7 @@ except ImportError:
     import ez_setup
     ez_setup.use_setuptools()
     from setuptools import setup, find_packages
-    
+
 import os
 
 setup(
@@ -20,7 +20,7 @@ setup(
     author = 'Jesper Noehr',
     author_email = 'jesper@noehr.org',
     packages = find_packages(),
-    namespace_packages = ['piston'],
+    #namespace_packages = ['piston'],
     include_package_data = True,
     zip_safe = False,
     classifiers = [

@@ -49,7 +49,7 @@ class Resource(object):
         self.email_errors = getattr(settings, 'PISTON_EMAIL_ERRORS', True)
         self.display_errors = getattr(settings, 'PISTON_DISPLAY_ERRORS', True)
         self.stream = getattr(settings, 'PISTON_STREAM_OUTPUT', False)
-        
+
         # Paging
         paging_params = getattr(settings, 'PISTON_PAGINATION_PARAMS', ('offset', 'limit'))
         self.paging_offset = paging_params[0]
@@ -74,7 +74,7 @@ class Resource(object):
 
     def form_validation_response(self, e):
         """
-        Method to return form validation error information. 
+        Method to return form validation error information.
         You will probably want to override this in your own
         `Resource` subclass.
         """
@@ -186,17 +186,17 @@ class Resource(object):
         status_code = 200
 
         # If we're looking at a response object which contains non-string
-        # content, then assume we should use the emitter to format that 
+        # content, then assume we should use the emitter to format that
         # content
         if isinstance(result, HttpResponse) and not result._is_string:
             status_code = result.status_code
             # Note: We can't use result.content here because that method attempts
-            # to convert the content into a string which we don't want. 
+            # to convert the content into a string which we don't want.
             # when _is_string is False _container is the raw data
             result = result._container
             if sig:
                 msg += 'Signature should be: %s' % sig
-     
+
         srl = emitter(result, typemapper, handler, fields, anonymous)
 
         try:
@@ -257,11 +257,11 @@ class Resource(object):
             """
 
             request_range = None
-            
+
             if 'HTTP_RANGE' in request.META:
                 """
-                Parse the reange request header. HTTP proper expects Range, 
-                but since we are deviating from the bytes nature, we will use 
+                Parse the reange request header. HTTP proper expects Range,
+                but since we are deviating from the bytes nature, we will use
                 a non-standard syntax. This is expected to be of the format:
 
                     "items" "=" start "-" end
@@ -282,13 +282,13 @@ class Resource(object):
                     else:
                         resp = rc.BAD_REQUEST
                         resp.write(' malformed range header')
-                        return resp 
+                        return resp
 
             elif self.paging_offset in request.GET and self.paging_limit in request.GET:
                 """
                 Alternatively, parse the query string for paging parameters. Here,
-                we ask for an offset and a limit, so we need to convert this to a 
-                fixed start and end to accomodate the slicing. Both parameters must 
+                we ask for an offset and a limit, so we need to convert this to a
+                fixed start and end to accomodate the slicing. Both parameters must
                 be specified, but either may be left empty, exclusively, to produce
                 the following behaviors:
 
@@ -313,10 +313,10 @@ class Resource(object):
                     header generation.  Checks that constraints defined
                     by the RFC hold, or raises exceptions.
                     """
-                    
+
                     if start != None and start < 0: raise BadRangeException('negative ranges not allowed')
                     if end != None and end < 0: raise BadRangeException('negative ranges not allowed')
-                    
+
                     range_start = start
                     range_end = end
                     last = total - 1
@@ -324,7 +324,7 @@ class Resource(object):
                     if range_start != None and range_end != None:
                         """
                         Basic, well-formed range.  Make sure that requested range is
-                        between 0 and last inclusive, and that start <= end. 
+                        between 0 and last inclusive, and that start <= end.
                         """
                         if range_start > last: raise BadRangeException("start gt last")
                         if range_start > range_end: raise BadRangeException("start lt end")
@@ -353,9 +353,9 @@ class Resource(object):
 
                     else:
                         raise BadRangeException("no start or end")
-                  
+
                     assert range_start != None
-                    assert range_end != None 
+                    assert range_end != None
                     return (range_start, range_end)
 
 
@@ -376,7 +376,6 @@ class Resource(object):
                 isinstance(result, list) or isinstance(result, QuerySet)):
             fields = handler.list_fields
 
->>>>>>> other
         srl = emitter(result, typemapper, handler, fields, anonymous)
 
         try:
@@ -440,7 +439,7 @@ class Resource(object):
 
     def error_handler(self, e, request, meth, em_format):
         """
-        Override this method to add handling of errors customized for your 
+        Override this method to add handling of errors customized for your
         needs
         """
         if isinstance(e, FormValidationError):
@@ -468,8 +467,8 @@ class Resource(object):
 
         elif isinstance(e, HttpStatusCode):
             return e.response
- 
-        else: 
+
+        else:
             """
             On errors (like code errors), we'd like to be able to
             give crash reports to both admins and also the calling
