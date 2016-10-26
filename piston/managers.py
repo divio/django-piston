@@ -1,23 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-KEY_SIZE = 18
-SECRET_SIZE = 32
+KEY_SIZE = 16
+SECRET_SIZE = 16
 
-class KeyManager(models.Manager):
-    '''Add support for random key/secret generation
-    '''
-    def generate_random_codes(self):
-        key = User.objects.make_random_password(length=KEY_SIZE)
-        secret = User.objects.make_random_password(length=SECRET_SIZE)
-
-        while self.filter(key__exact=key, secret__exact=secret).count():
-            secret = User.objects.make_random_password(length=SECRET_SIZE)
-
-        return key, secret
-
-
-class ConsumerManager(KeyManager):
+class ConsumerManager(models.Manager):
     def create_consumer(self, name, description=None, user=None):
         """
         Shortcut to create a consumer with random key/secret.
@@ -31,11 +18,10 @@ class ConsumerManager(KeyManager):
             consumer.description = description
 
         if created:
-            consumer.key, consumer.secret = self.generate_random_codes()
-            consumer.save()
+            consumer.generate_random_codes()
 
         return consumer
-
+    
     _default_consumer = None
 
 class ResourceManager(models.Manager):
@@ -50,7 +36,7 @@ class ResourceManager(models.Manager):
 
         return self._default_resource        
 
-class TokenManager(KeyManager):
+class TokenManager(models.Manager):
     def create_token(self, consumer, token_type, timestamp, user=None):
         """
         Shortcut to create a token with random key/secret.
@@ -61,8 +47,6 @@ class TokenManager(KeyManager):
                                             user=user)
 
         if created:
-            token.key, token.secret = self.generate_random_codes()
-            token.save()
+            token.generate_random_codes()
 
         return token
-        
