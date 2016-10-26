@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from setuptools import setup, find_packages
 
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    import ez_setup
-    ez_setup.use_setuptools()
-    from setuptools import setup, find_packages
+from piston import __version__
 
-import os
+
 
 setup(
     name = "django-piston",
@@ -20,7 +16,6 @@ setup(
     author = 'Jesper Noehr',
     author_email = 'jesper@noehr.org',
     packages = find_packages(),
-    #namespace_packages = ['piston'],
     include_package_data = True,
     zip_safe = False,
     classifiers = [
